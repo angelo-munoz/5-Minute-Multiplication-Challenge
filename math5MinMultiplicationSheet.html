@@ -1,0 +1,189 @@
+<html>
+
+<head>
+    <title>GEM's 5 min math!</title>
+    <style>
+        .number-pad {
+            border-bottom: 1px solid #000;
+            width: 50px;
+            text-align: right;
+            margin: 0 10px 40px;
+        }
+        
+        .operator {
+            padding-right: 10px
+        }
+        
+        button {
+            margin-right: 10px
+        }
+        
+        p {
+            display: inline;
+            border: 1px solid #aaa;
+            padding: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        
+        .p-selected {
+            background: #ccc;
+        }
+    </style>
+</head>
+
+<body onload="makeGrid()">
+    <h1>GEM's 5 min multiplication sheet!</h1>
+    <button onclick="makeGrid();return false;">New Problem!</button><button onclick="window.print();return false;">Print</button>
+    <h3>Focus numbers:
+        <p onclick="GEM.weighted.toggle(this);">0</p>
+        <p onclick="GEM.weighted.toggle(this);">1</p>
+        <p onclick="GEM.weighted.toggle(this);">2</p>
+        <p onclick="GEM.weighted.toggle(this);">3</p>
+        <p onclick="GEM.weighted.toggle(this);">4</p>
+        <p onclick="GEM.weighted.toggle(this);">5</p>
+        <p onclick="GEM.weighted.toggle(this);">6</p>
+        <p onclick="GEM.weighted.toggle(this);">7</p>
+        <p onclick="GEM.weighted.toggle(this);">8</p>
+        <p onclick="GEM.weighted.toggle(this);">9</p>
+        <p onclick="GEM.weighted.toggle(this);">10</p>
+        <p onclick="GEM.weighted.toggle(this);">11</p>
+        <p onclick="GEM.weighted.toggle(this);">12</p>
+    </h3>
+    <div id="grid"></div>
+
+</body>
+<script>
+    //focus numbers: when clicked add weighted generation.
+    function makeGrid() {
+        // Find a <table> element with id="myTable":
+        var table = document.createElement("TABLE");
+        for (var rowIndex = 0; rowIndex < 10; rowIndex++) {
+            // Create an empty <tr> element and add it to the 1st position of the table:
+            var row = table.insertRow(rowIndex);
+
+            for (columnIndex = 0; columnIndex < 10; columnIndex++) {
+                // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+                var cell1 = row.insertCell(columnIndex);
+
+                // Add some text to the new cells:
+                cell1.innerHTML = "<div class='number-pad'>" +
+                    "<div>" + GEM.getNumber().toString() + "</div>" +
+                    "<div><span class='operator'>x</span> " + GEM.getNumber().toString() + "</div></div>";
+
+            }
+        }
+        var grid = document.getElementById("grid");
+        grid.innerHTML = "";
+        grid.append(table);
+        grid = null;
+    }
+
+    // random in distribution...
+    var GEM = {
+
+        weighted: {
+            toggle: function(sender) {
+                //verify the senders state
+                if (sender.classList.length > 0) this.remove(sender.innerHTML, sender)
+                else this.add(sender.innerHTML, sender);
+            },
+            //add: add to array, rebuild table with focus items being 0.8
+            add: function(item, sender) {
+                console.log(item);
+                sender.classList.add("p-selected");
+                this.focusValues.push(parseInt(item));
+                //initialize weighted table with the new values
+                //build new object with the focus values
+                let weights = {
+                    0: (this.focusValues.indexOf(0) > -1 ? 0.8 : 0.1),
+                    1: (this.focusValues.indexOf(1) > -1 ? 0.8 : 0.1),
+                    2: (this.focusValues.indexOf(2) > -1 ? 0.8 : 0.1),
+                    3: (this.focusValues.indexOf(3) > -1 ? 0.8 : 0.1),
+                    4: (this.focusValues.indexOf(4) > -1 ? 0.8 : 0.1),
+                    5: (this.focusValues.indexOf(5) > -1 ? 0.8 : 0.1),
+                    6: (this.focusValues.indexOf(6) > -1 ? 0.8 : 0.1),
+                    7: (this.focusValues.indexOf(7) > -1 ? 0.8 : 0.1),
+                    8: (this.focusValues.indexOf(8) > -1 ? 0.8 : 0.1),
+                    9: (this.focusValues.indexOf(9) > -1 ? 0.8 : 0.1),
+                    10: (this.focusValues.indexOf(10) > -1 ? 0.8 : 0.1),
+                    11: (this.focusValues.indexOf(11) > -1 ? 0.8 : 0.1),
+                    12: (this.focusValues.indexOf(12) > -1 ? 0.8 : 0.1)
+                };
+                console.log(weights);
+
+                //set getNumber to getNumberWeighted
+                this.getNumberWeighted = this.initWeightedTable(weights);
+                GEM.getNumber = this.getNumberWeighted;
+
+                //redo grid
+                makeGrid();
+            },
+
+            //remove: remove a focus item from array
+            remove: function(item, sender) {
+                this.focusValues.splice(this.focusValues.indexOf(item), 1);
+                console.log("remove: " + item);
+                sender.classList.remove("p-selected");
+
+                //initialize weighted table with the new values
+                //build new object with the focus values
+                let weights = {
+                    0: (this.focusValues.indexOf(0) > -1 ? 0.8 : 0.1),
+                    1: (this.focusValues.indexOf(1) > -1 ? 0.8 : 0.1),
+                    2: (this.focusValues.indexOf(2) > -1 ? 0.8 : 0.1),
+                    3: (this.focusValues.indexOf(3) > -1 ? 0.8 : 0.1),
+                    4: (this.focusValues.indexOf(4) > -1 ? 0.8 : 0.1),
+                    5: (this.focusValues.indexOf(5) > -1 ? 0.8 : 0.1),
+                    6: (this.focusValues.indexOf(6) > -1 ? 0.8 : 0.1),
+                    7: (this.focusValues.indexOf(7) > -1 ? 0.8 : 0.1),
+                    8: (this.focusValues.indexOf(8) > -1 ? 0.8 : 0.1),
+                    9: (this.focusValues.indexOf(9) > -1 ? 0.8 : 0.1),
+                    10: (this.focusValues.indexOf(10) > -1 ? 0.8 : 0.1),
+                    11: (this.focusValues.indexOf(11) > -1 ? 0.8 : 0.1),
+                    12: (this.focusValues.indexOf(12) > -1 ? 0.8 : 0.1)
+                };
+                console.log(weights);
+
+                //set getNumber to getNumberWeighted
+                this.getNumberWeighted = this.initWeightedTable(weights);
+                GEM.getNumber = this.getNumberWeighted;
+
+                //redo grid
+                makeGrid();
+            },
+
+            //focusValues: array
+            focusValues: [],
+
+            //initTable: initialize the weighted table
+            //algorithm from https://stackoverflow.com/a/8435261
+            initWeightedTable: function(spec) {
+                console.log("initWeightedTable()")
+                var i, j, table = [];
+                for (i in spec) {
+                    // The constant 10 below should be computed based on the
+                    // weights in the spec for a correct and optimal table size.
+                    // E.g. the spec {0:0.999, 1:0.001} will break this impl.
+                    for (j = 0; j < spec[i] * 10; j++) {
+                        table.push(i);
+                    }
+                }
+                return function() {
+                    return table[Math.floor(Math.random() * table.length)];
+                }
+            },
+
+            getNumberWeighted: function() {}
+        },
+
+        //return a random number
+        getNumber: function() {
+            console.log("getNumber()")
+                //how to add weighting to a random number generator
+            return Math.floor(Math.random() * 13);
+        }
+    }
+</script>
+
+</html>
